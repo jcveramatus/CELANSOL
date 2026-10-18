@@ -1,3 +1,4 @@
+import { InviteHashRedirect } from "@/components/auth/invite-hash-redirect";
 import { Logo } from "@/components/marca/logo";
 import { Badge } from "@/components/ui/badge";
 
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col">
+      <InviteHashRedirect />
       <section className="bg-marca px-4 py-20 text-white sm:py-28">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
           <Logo tone="blanco" className="text-5xl sm:text-7xl" />
