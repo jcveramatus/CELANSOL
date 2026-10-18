@@ -25,6 +25,12 @@ npm run dev
 | `npx supabase migration new <nombre>` | Nueva migración de base de datos |
 | `npm run db:push` | Aplica las migraciones al proyecto de Supabase vinculado |
 | `npm run db:types` | Regenera `lib/supabase/database.types.ts` después de cambiar el esquema |
+| `node --env-file=.env.local scripts/invitar-staff.mjs <correo> "<Nombre>" <rol>` | Invita a alguien al panel. Roles: `admin`, `operaciones`, `contenido`, `atencion` |
+
+## Panel de administración
+- Entrada: http://localhost:3000/admin (pide login).
+- Las invitaciones llegan por correo y abren `/auth/aceptar` para crear la contraseña.
+- **Productos:** alta y edición, precio y precio tachado, costos de Dropi (privados), calculadora de margen y CPA, fotos y videos ("producto" y "en uso").
 
 ## Estructura
 ```
