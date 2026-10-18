@@ -1,10 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { CATALOG_EDITORS, requireStaff } from "@/lib/auth";
 import { parseSpecs } from "@/lib/catalog";
+import { CATALOG_TAG } from "@/lib/products/public";
 import { createClient } from "@/lib/supabase/server";
 
 export type ProductFormState = {
@@ -170,6 +171,7 @@ export async function saveProduct(
   if (dropiError) return dbError(dropiError);
 
   revalidatePath("/admin/productos");
+  updateTag(CATALOG_TAG);
   revalidatePath("/admin");
 
   if (!productId) redirect(`/admin/productos/${id}?nuevo=1`);
@@ -204,6 +206,7 @@ export async function deleteProduct(productId: string) {
   if (error) throw new Error("No se pudo eliminar el producto");
 
   revalidatePath("/admin/productos");
+  updateTag(CATALOG_TAG);
   revalidatePath("/admin");
   redirect("/admin/productos");
 }
@@ -249,6 +252,7 @@ export async function addMedia(input: z.input<typeof mediaSchema>) {
   if (error) throw new Error("No se pudo registrar el archivo");
   revalidatePath(`/admin/productos/${m.productId}`);
   revalidatePath("/admin/productos");
+  updateTag(CATALOG_TAG);
 }
 
 export async function deleteMedia(mediaId: string) {
@@ -267,6 +271,7 @@ export async function deleteMedia(mediaId: string) {
   await supabase.from("product_media").delete().eq("id", mediaId);
   revalidatePath(`/admin/productos/${media.product_id}`);
   revalidatePath("/admin/productos");
+  updateTag(CATALOG_TAG);
 }
 
 export async function moveMedia(mediaId: string, direction: "up" | "down") {
@@ -300,6 +305,7 @@ export async function moveMedia(mediaId: string, direction: "up" | "down") {
   );
   revalidatePath(`/admin/productos/${media.product_id}`);
   revalidatePath("/admin/productos");
+  updateTag(CATALOG_TAG);
 }
 
 export async function setMediaContext(mediaId: string, context: "producto" | "en_uso") {
@@ -326,6 +332,7 @@ export async function setMediaContext(mediaId: string, context: "producto" | "en
     .update({ context, position: (last?.position ?? -1) + 1 })
     .eq("id", mediaId);
   revalidatePath(`/admin/productos/${media.product_id}`);
+  updateTag(CATALOG_TAG);
 }
 
 export async function updateMediaAlt(mediaId: string, alt: string) {
@@ -335,4 +342,5 @@ export async function updateMediaAlt(mediaId: string, alt: string) {
     .from("product_media")
     .update({ alt: alt.trim().slice(0, 200) })
     .eq("id", mediaId);
+  updateTag(CATALOG_TAG);
 }

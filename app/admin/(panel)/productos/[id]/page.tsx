@@ -3,8 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { CATALOG_EDITORS, requireStaff } from "@/lib/auth";
+import { ButtonLink } from "@/components/ui/button";
+import { isBlockType, toEditable } from "@/lib/blocks";
 import { mediaUrl, one } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/server";
+import { BlocksEditor, type EditorBlock } from "../blocks-editor";
 import { DeleteProductButton } from "../delete-product-button";
 import { MediaManager } from "../media-manager";
 import { ProductForm } from "../product-form";
@@ -28,11 +31,13 @@ export default async function EditProductPage({
     .select(
       `*,
        product_variants ( id, price, compare_at_price, sku, stock, position, dropi_links ( * ) ),
-       product_media ( id, storage_path, url, type, context, alt, position )`,
+       product_media ( id, storage_path, url, type, context, alt, position ),
+       product_blocks ( id, type, data, position, is_visible )`,
     )
     .eq("id", id)
     .order("position", { referencedTable: "product_variants" })
     .order("position", { referencedTable: "product_media" })
+    .order("position", { referencedTable: "product_blocks" })
     .maybeSingle();
 
   if (!p) notFound();
@@ -75,6 +80,15 @@ export default async function EditProductPage({
     alt: m.alt,
   }));
 
+  const blocks: EditorBlock[] = p.product_blocks.flatMap((b) =>
+    isBlockType(b.type)
+      ? [{ id: b.id, type: b.type, isVisible: b.is_visible, values: toEditable(b.type, b.data) }]
+      : [],
+  );
+  const images = media
+    .filter((m) => m.type === "imagen")
+    .map((m, i) => ({ id: m.id, label: `${m.context === "en_uso" ? "En uso" : "Foto"} ${i + 1}${m.alt ? ` · ${m.alt}` : ""}` }));
+
   return (
     <>
       <PageHeader
@@ -85,6 +99,14 @@ export default async function EditProductPage({
             <Link href="/admin/productos" className="self-center text-sm text-tinta-suave underline">
               Volver
             </Link>
+            <ButtonLink href={`/admin/vista-previa/${p.id}`} target="_blank" variant="secondary" size="sm">
+              Vista previa
+            </ButtonLink>
+            {p.status === "activo" && (
+              <ButtonLink href={`/productos/${p.slug}`} target="_blank" variant="secondary" size="sm">
+                Ver en tienda
+              </ButtonLink>
+            )}
             <DeleteProductButton productId={p.id} title={p.title} />
           </>
         }
@@ -96,6 +118,7 @@ export default async function EditProductPage({
           </p>
         )}
         <MediaManager productId={p.id} media={media} />
+        <BlocksEditor productId={p.id} blocks={blocks} images={images} />
         <ProductForm initial={initial} />
       </main>
     </>
