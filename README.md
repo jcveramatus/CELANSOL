@@ -23,7 +23,8 @@ npm run dev
 | `npm run build` | Build de producción |
 | `npm run lint` | Revisión de código |
 | `npx supabase migration new <nombre>` | Nueva migración de base de datos |
-| `npx supabase db push` | Aplica las migraciones al proyecto de Supabase vinculado |
+| `npm run db:push` | Aplica las migraciones al proyecto de Supabase vinculado |
+| `npm run db:types` | Regenera `lib/supabase/database.types.ts` después de cambiar el esquema |
 
 ## Estructura
 ```
