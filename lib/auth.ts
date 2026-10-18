@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
 
@@ -15,6 +16,9 @@ export type Staff = {
 
 /** Sesión actual: userId (si hay login) y su ficha de staff (si existe). Se deduplica por request. */
 const getSession = cache(async (): Promise<{ userId: string | null; staff: Staff | null }> => {
+  // La sesión depende de la visita real (Supabase valida el vencimiento con Date.now()):
+  // no se pre-genera.
+  await connection();
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
   const claims = claimsData?.claims;
