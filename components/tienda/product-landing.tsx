@@ -2,25 +2,27 @@ import { Badge } from "@/components/ui/badge";
 import { Price } from "@/components/ui/price";
 import { LINE_LABEL } from "@/lib/catalog";
 import type { LandingProduct } from "@/lib/products/landing";
+import type { StoreSettings } from "@/lib/store/settings-schema";
 import { whatsappLink } from "@/lib/whatsapp";
 import { formatSoles } from "@/lib/utils";
 import { BuyCta, StickyBuyBar } from "./buy-cta";
-import { IconCash, IconChat, IconShield, IconTruck } from "./icons";
+import { StoreIcon } from "./store-icon";
 import { ProductBlocks } from "./product-blocks";
 import { ProductGallery } from "./product-gallery";
+import { ViewItemEvent } from "./view-item-event";
 
 const BUY_ID = "comprar";
 
-const trust = [
-  { icon: IconCash, text: "Pagas al recibir" },
-  { icon: IconTruck, text: "Envíos a todo el Perú" },
-  { icon: IconChat, text: "Confirmación por WhatsApp" },
-  { icon: IconShield, text: "Cambio por fallas de fábrica" },
-];
-
-export function ProductLanding({ product }: { product: LandingProduct }) {
+export function ProductLanding({
+  product,
+  settings,
+}: {
+  product: LandingProduct;
+  settings: StoreSettings;
+}) {
   const orderLink = whatsappLink(
-    `Hola Celansol, quiero pedir: ${product.title} (${formatSoles(product.price)}). Pago contra entrega.`,
+    settings.whatsappNumber,
+    `Hola ${settings.storeName}, quiero pedir: ${product.title} (${formatSoles(product.price)}). Pago contra entrega.`,
   );
 
   return (
@@ -48,9 +50,9 @@ export function ProductLanding({ product }: { product: LandingProduct }) {
           <BuyCta id={BUY_ID} href={orderLink} price={product.price} />
 
           <ul className="grid grid-cols-2 gap-2">
-            {trust.map(({ icon: Icon, text }) => (
+            {settings.trustBadges.map(({ icon, text }) => (
               <li key={text} className="flex items-center gap-2 rounded-xl bg-fondo-suave px-3 py-2.5 text-xs font-medium sm:text-sm">
-                <Icon className="size-5 shrink-0 text-verde-accion" />
+                <StoreIcon name={icon} className="size-5 shrink-0 text-verde-accion" />
                 {text}
               </li>
             ))}
@@ -86,6 +88,7 @@ export function ProductLanding({ product }: { product: LandingProduct }) {
         </div>
       </section>
 
+      <ViewItemEvent id={product.id} name={product.title} price={product.price} category={LINE_LABEL[product.line]} />
       <StickyBuyBar targetId={BUY_ID} href={orderLink} price={product.price} title={product.title} />
     </>
   );

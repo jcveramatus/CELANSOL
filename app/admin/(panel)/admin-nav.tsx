@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const items = [
   { href: "/admin", label: "Inicio", exact: true },
   { href: "/admin/productos", label: "Productos" },
+  { href: "/admin/preferencias", label: "Preferencias" },
   { href: "/admin/pedidos", label: "Pedidos", soon: true },
   { href: "/admin/analitica", label: "Analítica", soon: true },
 ];

@@ -623,6 +623,48 @@ export type Database = {
         }
         Relationships: []
       }
+      store_settings: {
+        Row: {
+          announcements: string[]
+          footer_text: string
+          gtm_container_id: string | null
+          id: boolean
+          seo_description: string | null
+          seo_title: string | null
+          store_name: string
+          trust_badges: Json
+          updated_at: string
+          updated_by: string | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          announcements?: string[]
+          footer_text?: string
+          gtm_container_id?: string | null
+          id?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          store_name?: string
+          trust_badges?: Json
+          updated_at?: string
+          updated_by?: string | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          announcements?: string[]
+          footer_text?: string
+          gtm_container_id?: string | null
+          id?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          store_name?: string
+          trust_badges?: Json
+          updated_at?: string
+          updated_by?: string | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       customer_stats: {

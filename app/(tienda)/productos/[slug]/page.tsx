@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductLanding } from "@/components/tienda/product-landing";
 import { getPublicProduct } from "@/lib/products/public";
+import { getStoreSettings } from "@/lib/store/settings";
 
 export async function generateMetadata({
   params,
@@ -36,9 +37,9 @@ export default function ProductPage({ params }: PageProps<"/productos/[slug]">) 
 
 async function ProductContent({ params }: Pick<PageProps<"/productos/[slug]">, "params">) {
   const { slug } = await params;
-  const product = await getPublicProduct(slug);
+  const [product, settings] = await Promise.all([getPublicProduct(slug), getStoreSettings()]);
   if (!product) notFound();
-  return <ProductLanding product={product} />;
+  return <ProductLanding product={product} settings={settings} />;
 }
 
 function LandingSkeleton() {

@@ -7,6 +7,7 @@ import { ProductLanding } from "@/components/tienda/product-landing";
 import { requireStaff } from "@/lib/auth";
 import { STATUS_LABEL } from "@/lib/catalog";
 import { LANDING_SELECT, toLandingProduct } from "@/lib/products/landing";
+import { getStoreSettings } from "@/lib/store/settings";
 import { createClient } from "@/lib/supabase/server";
 
 // Vista previa interna: depende de la sesión, no se pre-genera.
@@ -31,6 +32,7 @@ export default async function PreviewPage({ params }: PageProps<"/admin/vista-pr
   if (!data) notFound();
 
   const product = toLandingProduct(data);
+  const settings = await getStoreSettings();
 
   return (
     <>
@@ -41,11 +43,11 @@ export default async function PreviewPage({ params }: PageProps<"/admin/vista-pr
           Volver a editar
         </Link>
       </div>
-      <StoreHeader />
+      <StoreHeader settings={settings} />
       <div className="flex flex-1 flex-col">
-        <ProductLanding product={product} />
+        <ProductLanding product={product} settings={settings} />
       </div>
-      <StoreFooter />
+      <StoreFooter settings={settings} />
     </>
   );
 }
